@@ -1,0 +1,30 @@
+services:
+  db:
+    image: mysql:8
+    container_name: MySQL
+    ports:
+      - 3306:3306
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sql.entrypoints=web, websecure"
+      - "traefik.http.routers.sql.rule=Host(`sql.virmin8.uk`)"
+      - "traefik.http.routers.sql.tls=true"
+      - "traefik.http.services.sql.loadbalancer.server.port=3306"
+    volumes:
+     - /srv/config/MySQL:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${ROOT_PASSWORD}
+      - MYSQL_DATABASE=mydatabase
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - traefik_default
+
+networks:
+  traefik_default:
+    external: true
+
+
+
+
