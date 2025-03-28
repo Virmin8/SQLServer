@@ -67,3 +67,67 @@ def delete_service(service_id: int):
     if cursor.rowcount == 0:
         raise HTTPException(status_code=404, detail="User not found")
     return {"message": "Service deleted successfully"}
+
+@app.put("/services/{service_id}", status_code=status.HTTP_200_OK)
+def update_service(service_id: int, user: DBServices):
+
+    update_query = """
+    UPDATE services
+    SET Name = %s, Monthly = %s, Day = %s, Month = %s, Year = %s, Cost = %s, Currency = %s
+    WHERE Service_id = %s
+    """
+    values = (user.name, user.monthly, user.day, user.month, user.year, user.cost, user.currency, service_id)
+
+    cursor.execute(update_query, values)
+    mydb.commit()
+    if cursor.rowcount == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"message": "User updated successfully"}
+
+@app.get("/users/", status_code=status.HTTP_200_OK)
+def get_users():
+    select_query = "SELECT * FROM users"
+    cursor.execute(select_query)
+    result = cursor.fetchall()
+    return result
+
+@app.get("/users/{user_id}", status_code=status.HTTP_200_OK)
+def get_user_name(user_id: int):
+    select_query = "SELECT Name FROM users WHERE ID = %s"
+    cursor.execute(select_query,(user_id,))
+    result = cursor.fetchone()
+    if result:
+        return result
+    else:
+        raise HTTPException(status_code=404, detail="User not found")
+
+@app.get("/users/admin/{user_name}", status_code=status.HTTP_200_OK)
+def get_user_admin_status(user_name: str):
+    select_query = "SELECT Admin FROM users WHERE Name = %s"
+    cursor.execute(select_query, (user_name,))
+    result = cursor.fetchone()
+    if result:
+        return result
+    else:
+        raise HTTPException(status_code=404, detail="User not found")
+
+@app.get("/users/id/{user_name}", status_code=status.HTTP_200_OK)
+def get_user_id(user_name: str):
+    select_query = "SELECT ID FROM users WHERE Name = %s"
+    cursor.execute(select_query, (user_name,))
+    result = cursor.fetchone()
+    if result:
+        return result
+    else:
+        raise HTTPException(status_code=404, detail="User not found")
+
+@app.get("/users/list/", status_code=status.HTTP_200_OK)
+def get_user_list():
+    select_query = "SELECT ID,Name FROM users"
+    cursor.execute(select_query)
+    result = cursor.fetchall()
+    if result:
+        return result
+    else:
+        raise HTTPException(status_code=404, detail="User not found")
+    
