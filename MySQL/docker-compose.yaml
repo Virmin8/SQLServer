@@ -3,7 +3,7 @@ services:
     image: mysql:8
     container_name: MySQL
     ports:
-      - 3306:3306
+      - 3307:3306
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.sql.entrypoints=web, websecure"
